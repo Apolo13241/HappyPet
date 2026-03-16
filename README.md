@@ -83,13 +83,3 @@ El sistema usa el **ambiente de integración** de Transbank (no requiere credenc
 | **Usuarios** | Gestión de usuarios del sistema |
 
 ---
-
-## 🎯 Requisitos Cumplidos (Actividad Formativa)
-
-- ✅ Login de acceso con autenticación segura
-- ✅ Menú principal (Dashboard con KPIs)
-- ✅ Mantenedor completo CRUD de Productos
-- ✅ Mantenedor completo CRUD de Clientes
-- ✅ Proceso: Venta con carrito y pago Webpay
-- ✅ Reporte por pantalla: Ventas, top productos, stock bajo
-- ✅ 25 requisitos documentados (20 RF + 5 RNF)
