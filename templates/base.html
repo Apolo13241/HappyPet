@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HappyPet{% endblock %} 🐾</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #FF6B2C;
+            --orange-light: #FF8C5A;
+            --orange-pale: #FFF0E8;
+            --orange-dark: #E55A1F;
+            --white: #FFFFFF;
+            --off-white: #FAFAF8;
+            --text: #2D2D2D;
+            --text-light: #6B6B6B;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --warning: #F39C12;
+            --info: #3498DB;
+            --sidebar-w: 260px;
+            --shadow: 0 4px 20px rgba(255,107,44,0.12);
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--off-white);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-w); height: 100vh;
+            background: linear-gradient(160deg, #FF6B2C 0%, #FF4500 100%);
+            display: flex; flex-direction: column;
+            z-index: 100; overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(255,107,44,0.25);
+        }
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .sidebar-logo .brand {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px; color: white;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .sidebar-logo .brand .paw { font-size: 32px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+        .sidebar-logo small {
+            display: block; color: rgba(255,255,255,0.7);
+            font-size: 11px; margin-top: 2px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .sidebar-user {
+            padding: 16px 24px;
+            background: rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-user .avatar {
+            width: 38px; height: 38px;
+            background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 800; color: var(--orange);
+        }
+        .sidebar-user .info .name { color: white; font-weight: 700; font-size: 14px; }
+        .sidebar-user .info .role { color: rgba(255,255,255,0.65); font-size: 12px; }
+        .nav-section { padding: 16px 16px 4px; }
+        .nav-section-title {
+            color: rgba(255,255,255,0.5); font-size: 10px;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            font-weight: 800; padding: 0 8px; margin-bottom: 6px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 16px; border-radius: 12px; margin-bottom: 3px;
+            color: rgba(255,255,255,0.85); text-decoration: none;
+            font-weight: 700; font-size: 14px; transition: all 0.2s;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.2); color: white;
+            transform: translateX(4px);
+        }
+        .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+        .nav-item.logout { margin-top: auto; color: rgba(255,255,255,0.6); }
+        .sidebar-footer { margin-top: auto; padding: 16px; }
+        /* Main */
+        .main {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+        }
+        .topbar {
+            background: white; padding: 16px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 50;
+        }
+        .topbar .page-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 22px; color: var(--orange);
+        }
+        .topbar .topbar-actions { display: flex; align-items: center; gap: 12px; }
+        .content { padding: 28px 32px; }
+        /* Cards */
+        .card {
+            background: white; border-radius: var(--radius);
+            box-shadow: var(--shadow); overflow: hidden;
+        }
+        .card-header {
+            padding: 20px 24px; border-bottom: 1px solid #F5F5F0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px; color: var(--text);
+        }
+        .card-body { padding: 24px; }
+        /* Stats */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: white; border-radius: var(--radius);
+            padding: 24px; box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 16px;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px;
+        }
+        .stat-icon.orange { background: var(--orange-pale); }
+        .stat-icon.green { background: #E8F8F1; }
+        .stat-icon.blue { background: #EBF4FD; }
+        .stat-icon.purple { background: #F3EEF9; }
+        .stat-value { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--text); }
+        .stat-label { color: var(--text-light); font-size: 13px; font-weight: 600; }
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 10px; border: none;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px;
+            cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .btn-primary { background: var(--orange); color: white; }
+        .btn-primary:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,44,0.4); }
+        .btn-secondary { background: var(--off-white); color: var(--text); border: 2px solid #E8E8E0; }
+        .btn-secondary:hover { background: #EFEFE8; }
+        .btn-danger { background: #FEF0EF; color: var(--danger); border: 2px solid #FADBD8; }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-success { background: #E9F7EF; color: var(--success); border: 2px solid #A9DFBF; }
+        .btn-success:hover { background: var(--success); color: white; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: var(--orange-pale); color: var(--orange-dark);
+            font-weight: 800; padding: 14px 16px;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+            text-align: left;
+        }
+        tbody td { padding: 14px 16px; border-bottom: 1px solid #F5F5F0; font-size: 14px; }
+        tbody tr:hover { background: #FFFAF7; }
+        tbody tr:last-child td { border-bottom: none; }
+        /* Forms */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; color: var(--text); }
+        input, select, textarea {
+            width: 100%; padding: 12px 16px; border: 2px solid #E8E8E0;
+            border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 14px;
+            transition: border-color 0.2s; background: white;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(255,107,44,0.12);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* Badges */
+        .badge {
+            display: inline-flex; align-items: center; padding: 4px 10px;
+            border-radius: 20px; font-size: 12px; font-weight: 700;
+        }
+        .badge-success { background: #E9F7EF; color: #27AE60; }
+        .badge-danger { background: #FEF0EF; color: #E74C3C; }
+        .badge-warning { background: #FEF9E7; color: #F39C12; }
+        .badge-info { background: #EBF4FD; color: #3498DB; }
+        .badge-orange { background: var(--orange-pale); color: var(--orange-dark); }
+        /* Alerts */
+        .alert {
+            padding: 14px 18px; border-radius: 12px; margin-bottom: 20px;
+            font-weight: 600; display: flex; align-items: center; gap: 10px;
+        }
+        .alert-success { background: #E9F7EF; color: #1E8449; border-left: 4px solid #2ECC71; }
+        .alert-error { background: #FEF0EF; color: #C0392B; border-left: 4px solid #E74C3C; }
+        .alert-info { background: #EBF4FD; color: #1A5276; border-left: 4px solid #3498DB; }
+        /* Paw decoration */
+        .paw-bg {
+            position: fixed; top: 0; right: 0; width: 400px; height: 400px;
+            font-size: 200px; opacity: 0.03; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 0;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+        .text-orange { color: var(--orange); }
+        .text-muted { color: var(--text-light); }
+        .fw-bold { font-weight: 800; }
+        .mt-1 { margin-top: 8px; } .mt-2 { margin-top: 16px; } .mt-3 { margin-top: 24px; }
+        .mb-1 { margin-bottom: 8px; } .mb-2 { margin-bottom: 16px; } .mb-3 { margin-bottom: 24px; }
+        .d-flex { display: flex; } .align-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 12px; } .gap-3 { gap: 20px; }
+        .search-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .search-bar input, .search-bar select { width: auto; min-width: 180px; }
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--text-light);
+        }
+        .empty-state .icon { font-size: 60px; margin-bottom: 16px; }
+        .empty-state h3 { font-family: 'Fredoka One', cursive; font-size: 20px; color: var(--text); }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main { margin-left: 0; }
+            .form-row { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="paw-bg">🐾</div>
+
+{% if session.user_id %}
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="brand"><span class="paw">🐾</span> HappyPet</div>
+        <small>Tienda de Mascotas</small>
+    </div>
+    <div class="sidebar-user">
+        <div class="avatar">{{ session.nombre[0].upper() }}</div>
+        <div class="info">
+            <div class="name">{{ session.nombre }}</div>
+            <div class="role">Administrador</div>
+        </div>
+    </div>
+    <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint=='dashboard' %}active{% endif %}">
+            <span class="icon">📊</span> Dashboard
+        </a>
+    </div>
+    <div class="nav-section">
+        <div class="nav-section-title">Gestión</div>
+        <a href="{{ url_for('productos') }}" class="nav-item {% if 'producto' in request.endpoint %}active{% endif %}">
+            <span class="icon">🛍️</span> Productos
+        </a>
+        <a href="{{ url_for('clientes') }}" class="nav-item {% if 'cliente' in request.endpoint %}active{% endif %}">
+            <span class="icon">👤</span> Clientes
+        </a>
+        <a href="{{ url_for('nueva_venta') }}" class="nav-item {% if request.endpoint=='nueva_venta' %}active{% endif %}">
+            <span class="icon">🛒</span> Nueva Venta
+        </a>
+        <a href="{{ url_for('ventas') }}" class="nav-item {% if request.endpoint=='ventas' %}active{% endif %}">
+            <span class="icon">💰</span> Historial Ventas
+        </a>
+    </div>
+    <div class="nav-section">
+        <div class="nav-section-title">Administración</div>
+        <a href="{{ url_for('reportes') }}" class="nav-item {% if request.endpoint=='reportes' %}active{% endif %}">
+            <span class="icon">📈</span> Reportes
+        </a>
+        <a href="{{ url_for('usuarios') }}" class="nav-item {% if 'usuario' in request.endpoint %}active{% endif %}">
+            <span class="icon">👥</span> Usuarios
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <a href="{{ url_for('logout') }}" class="nav-item logout">
+            <span class="icon">🚪</span> Cerrar Sesión
+        </a>
+    </div>
+</aside>
+{% endif %}
+
+<main class="main">
+    {% if session.user_id %}
+    <div class="topbar">
+        <div class="page-title">{% block page_title %}HappyPet{% endblock %}</div>
+        <div class="topbar-actions">
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary btn-sm">🛒 Nueva Venta</a>
+        </div>
+    </div>
+    {% endif %}
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for cat, msg in messages %}
+            <div class="alert alert-{{ 'success' if cat=='success' else 'error' if cat=='error' else 'info' }}">
+                {{ '✅' if cat=='success' else '❌' if cat=='error' else 'ℹ️' }} {{ msg }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

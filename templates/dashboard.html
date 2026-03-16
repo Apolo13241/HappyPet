@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}📊 Dashboard{% endblock %}
+{% block content %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon orange">🛍️</div>
+        <div>
+            <div class="stat-value text-orange">{{ total_productos }}</div>
+            <div class="stat-label">Productos Activos</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div>
+            <div class="stat-value">{{ total_ventas }}</div>
+            <div class="stat-label">Ventas Completadas</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon blue">💵</div>
+        <div>
+            <div class="stat-value" style="font-size:22px">${{ "{:,.0f}".format(ingresos) }}</div>
+            <div class="stat-label">Ingresos Totales</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">👤</div>
+        <div>
+            <div class="stat-value">{{ total_clientes }}</div>
+            <div class="stat-label">Clientes Registrados</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">🐱🐶 Ventas Recientes</span>
+            <a href="{{ url_for('ventas') }}" class="btn btn-secondary btn-sm">Ver todas</a>
+        </div>
+        <div class="table-container">
+            {% if ventas_recientes %}
+            <table>
+                <thead><tr><th>N° Venta</th><th>Cliente</th><th>Items</th><th>Total</th></tr></thead>
+                <tbody>
+                {% for v in ventas_recientes %}
+                <tr>
+                    <td><strong>{{ v['numero_venta'] }}</strong></td>
+                    <td>{{ v['cliente_nombre'] }}</td>
+                    <td>{{ v['items'] }} productos</td>
+                    <td class="text-orange fw-bold">${{ "{:,.0f}".format(v['total']) }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="icon">💰</div>
+                <h3>Sin ventas aún</h3>
+                <p>¡Empieza a vender!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">⚠️ Stock Bajo</span>
+            <a href="{{ url_for('productos') }}" class="btn btn-secondary btn-sm">Ver todos</a>
+        </div>
+        <div class="table-container">
+            {% if low_stock %}
+            <table>
+                <thead><tr><th>Producto</th><th>Tipo</th><th>Stock</th></tr></thead>
+                <tbody>
+                {% for p in low_stock %}
+                <tr>
+                    <td>{{ p['imagen'] }} {{ p['nombre'][:30] }}</td>
+                    <td><span class="badge badge-orange">{{ p['tipo_mascota'] }}</span></td>
+                    <td><span class="badge badge-{{ 'danger' if p['stock']<=5 else 'warning' }}">{{ p['stock'] }} unid.</span></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="icon">✅</div>
+                <h3>Stock en buen estado</h3>
+                <p>Todos los productos tienen suficiente stock</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <span class="card-title">🚀 Acciones Rápidas</span>
+    </div>
+    <div class="card-body">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">🛒 Nueva Venta</a>
+            <a href="{{ url_for('nuevo_producto') }}" class="btn btn-secondary">➕ Añadir Producto</a>
+            <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-secondary">👤 Nuevo Cliente</a>
+            <a href="{{ url_for('reportes') }}" class="btn btn-secondary">📈 Ver Reportes</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

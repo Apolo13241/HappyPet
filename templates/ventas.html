@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Ventas{% endblock %}
+{% block page_title %}💰 Historial de Ventas{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="table-container">
+        {% if ventas %}
+        <table>
+            <thead>
+                <tr><th>N° Venta</th><th>Cliente</th><th>Items</th><th>Total</th><th>Estado</th><th>Método</th><th>Fecha</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+            {% for v in ventas %}
+            <tr>
+                <td><strong>{{ v['numero_venta'] or '#'+v['id']|string }}</strong></td>
+                <td>{{ v['cliente_nombre'] }}</td>
+                <td>{{ v['items'] or 0 }} item(s)</td>
+                <td class="text-orange fw-bold">${{ "{:,.0f}".format(v['total']) }}</td>
+                <td>
+                    <span class="badge {{ 'badge-success' if v['estado']=='pagado' else 'badge-warning' if v['estado']=='pendiente' else 'badge-danger' }}">
+                        {{ '✅' if v['estado']=='pagado' else '⏳' if v['estado']=='pendiente' else '❌' }} {{ v['estado'].capitalize() }}
+                    </span>
+                </td>
+                <td><span class="badge badge-info">{{ v['metodo_pago'] or 'webpay' }}</span></td>
+                <td style="font-size:12px;color:#888">{{ v['creado_en'][:16] if v['creado_en'] else '' }}</td>
+                <td>
+                    <div style="display:flex;gap:6px">
+                        <a href="{{ url_for('detalle_venta_view', vid=v['id']) }}" class="btn btn-secondary btn-sm">🔍</a>
+                        {% if v['estado'] == 'pendiente' %}
+                        <form method="post" action="{{ url_for('pagar_demo', vid=v['id']) }}">
+                            <button type="submit" class="btn btn-success btn-sm">✅ Demo</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">💰</div>
+            <h3>Sin ventas registradas</h3>
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary mt-2">🛒 Nueva Venta</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

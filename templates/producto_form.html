@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div style="max-width:700px">
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">{{ 'Editar Producto' if producto else 'Nuevo Producto' }}</span>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre del Producto *</label>
+                    <input type="text" name="nombre" value="{{ producto['nombre'] if producto else '' }}" required placeholder="Ej: Alimento Premium Gato">
+                </div>
+                <div class="form-group">
+                    <label>Emoji / Icono</label>
+                    <input type="text" name="imagen" value="{{ producto['imagen'] if producto else '' }}" placeholder="Ej: un emoji">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Descripcion</label>
+                <textarea name="descripcion" rows="3" placeholder="Descripcion del producto...">{{ producto['descripcion'] if producto else '' }}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio (CLP) *</label>
+                    <input type="number" name="precio" value="{{ producto['precio'] if producto else '' }}" required min="1" placeholder="Ej: 9990">
+                </div>
+                <div class="form-group">
+                    <label>Stock *</label>
+                    <input type="number" name="stock" value="{{ producto['stock'] if producto else '0' }}" required min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoria *</label>
+                    <select name="categoria" required>
+                        {% set cats = ['Alimentos', 'Higiene', 'Accesorios', 'Juguetes', 'Salud', 'Transporte', 'Descanso', 'Ropa', 'Otros'] %}
+                        {% for c in cats %}
+                        <option value="{{ c }}" {{ 'selected' if producto and producto['categoria']==c else '' }}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Mascota *</label>
+                    <select name="tipo_mascota" required>
+                        <option value="Gato" {{ 'selected' if producto and producto['tipo_mascota']=='Gato' else '' }}>Gato</option>
+                        <option value="Perro" {{ 'selected' if producto and producto['tipo_mascota']=='Perro' else '' }}>Perro</option>
+                        <option value="Ambos" {{ 'selected' if producto and producto['tipo_mascota']=='Ambos' else '' }}>Ambos</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:8px">
+                <button type="submit" class="btn btn-primary">{{ 'Actualizar' if producto else 'Crear Producto' }}</button>
+                <a href="{{ url_for('productos') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}

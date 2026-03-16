@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block page_title %}👤 Clientes{% endblock %}
+{% block content %}
+<div class="d-flex justify-between align-center mb-3">
+    <span style="color:#888;font-weight:600">{{ clientes|length }} cliente(s) registrado(s)</span>
+    <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary">➕ Nuevo Cliente</a>
+</div>
+<div class="card">
+    <div class="table-container">
+        {% if clientes %}
+        <table>
+            <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Mascota</th><th>Registrado</th><th>Acciones</th></tr></thead>
+            <tbody>
+            {% for c in clientes %}
+            <tr>
+                <td><strong>{{ c['nombre'] }}</strong></td>
+                <td>{{ c['email'] or '—' }}</td>
+                <td>{{ c['telefono'] or '—' }}</td>
+                <td>
+                    <span class="badge {{ 'badge-orange' if c['tipo_mascota']=='Gato' else 'badge-success' if c['tipo_mascota']=='Perro' else 'badge-info' }}">
+                        {{ '🐱' if c['tipo_mascota']=='Gato' else '🐶' if c['tipo_mascota']=='Perro' else '🐾' }} {{ c['tipo_mascota'] or 'N/A' }}
+                    </span>
+                </td>
+                <td style="font-size:12px;color:#888">{{ c['creado_en'][:10] if c['creado_en'] else '' }}</td>
+                <td>
+                    <div style="display:flex;gap:6px">
+                        <a href="{{ url_for('editar_cliente', cid=c['id']) }}" class="btn btn-secondary btn-sm">✏️</a>
+                        <form method="post" action="{{ url_for('eliminar_cliente', cid=c['id']) }}" onsubmit="return confirm('¿Eliminar este cliente?')">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">👤</div>
+            <h3>Sin clientes registrados</h3>
+            <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary mt-2">➕ Agregar Cliente</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

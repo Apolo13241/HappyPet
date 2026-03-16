@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div style="max-width:600px">
+<div class="card">
+    <div class="card-header"><span class="card-title">Datos del Cliente</span></div>
+    <div class="card-body">
+        <form method="post">
+            <div class="form-group">
+                <label>Nombre Completo *</label>
+                <input type="text" name="nombre" value="{{ cliente['nombre'] if cliente else '' }}" required placeholder="Nombre del cliente">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ cliente['email'] if cliente else '' }}" placeholder="email@ejemplo.com">
+                </div>
+                <div class="form-group">
+                    <label>Telefono</label>
+                    <input type="text" name="telefono" value="{{ cliente['telefono'] if cliente else '' }}" placeholder="+56 9 XXXX XXXX">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Mascota</label>
+                <select name="tipo_mascota">
+                    <option value="Gato" {{ 'selected' if cliente and cliente['tipo_mascota']=='Gato' }}>Gato</option>
+                    <option value="Perro" {{ 'selected' if cliente and cliente['tipo_mascota']=='Perro' }}>Perro</option>
+                    <option value="Ambos" {{ 'selected' if cliente and cliente['tipo_mascota']=='Ambos' }}>Ambos</option>
+                    <option value="Otro" {{ 'selected' if cliente and cliente['tipo_mascota']=='Otro' }}>Otro</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:12px">
+                <button type="submit" class="btn btn-primary">{{ 'Actualizar' if cliente else 'Registrar Cliente' }}</button>
+                <a href="{{ url_for('clientes') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}

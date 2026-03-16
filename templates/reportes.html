@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block page_title %}📈 Reportes y Estadísticas{% endblock %}
+{% block content %}
+
+<!-- Resumen global -->
+<div class="stats-grid mb-3">
+    <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div>
+            <div class="stat-value" style="font-size:22px">${{ "{:,.0f}".format(resumen['total_ingresos']) }}</div>
+            <div class="stat-label">Ingresos Totales</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange">🛒</div>
+        <div>
+            <div class="stat-value">{{ resumen['total_ventas'] }}</div>
+            <div class="stat-label">Ventas Completadas</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon blue">📊</div>
+        <div>
+            <div class="stat-value" style="font-size:22px">${{ "{:,.0f}".format(resumen['ticket_promedio']) }}</div>
+            <div class="stat-label">Ticket Promedio</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Top Productos -->
+    <div class="card">
+        <div class="card-header"><span class="card-title">🏆 Top Productos Vendidos</span></div>
+        <div class="table-container">
+            {% if top_productos %}
+            <table>
+                <thead><tr><th>#</th><th>Producto</th><th>Vendidos</th><th>Total</th></tr></thead>
+                <tbody>
+                {% for p in top_productos %}
+                {% set i = loop.index %}
+                <tr>
+                    <td><strong class="text-orange">#{{ i }}</strong></td>
+                    <td>{{ p['imagen'] }} {{ p['nombre'][:30] }}</td>
+                    <td><span class="badge badge-success">{{ p['vendidos'] }} unid.</span></td>
+                    <td class="text-orange fw-bold">${{ "{:,.0f}".format(p['total']) }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state" style="padding:30px"><p>Sin datos de ventas</p></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Ventas por tipo mascota -->
+    <div class="card">
+        <div class="card-header"><span class="card-title">🐱🐶 Ventas por Tipo de Mascota</span></div>
+        <div class="card-body">
+            {% if ventas_por_tipo %}
+            {% for v in ventas_por_tipo %}
+            <div style="margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                    <span class="fw-bold">{{ '🐱 Gato' if v['tipo_mascota']=='Gato' else '🐶 Perro' if v['tipo_mascota']=='Perro' else '🐾 '+v['tipo_mascota'] }}</span>
+                    <span class="text-orange fw-bold">${{ "{:,.0f}".format(v['total']) }}</span>
+                </div>
+                {% set pct = (v['total'] / (resumen['total_ingresos'] or 1) * 100)|int %}
+                <div style="background:#F5F5F0;border-radius:8px;height:10px;overflow:hidden">
+                    <div style="background:var(--orange);height:100%;width:{{ pct }}%;border-radius:8px;transition:width 1s ease"></div>
+                </div>
+                <div style="font-size:12px;color:#888;margin-top:4px">{{ pct }}% de los ingresos</div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state" style="padding:30px"><p>Sin datos</p></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Stock bajo -->
+{% if stock_bajo %}
+<div class="card mt-3">
+    <div class="card-header">
+        <span class="card-title">⚠️ Alertas de Stock Bajo</span>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Producto</th><th>Categoría</th><th>Tipo</th><th>Stock Actual</th><th>Acción</th></tr></thead>
+            <tbody>
+            {% for p in stock_bajo %}
+            <tr>
+                <td>{{ p['imagen'] }} <strong>{{ p['nombre'] }}</strong></td>
+                <td><span class="badge badge-info">{{ p['categoria'] }}</span></td>
+                <td><span class="badge badge-orange">{{ p['tipo_mascota'] }}</span></td>
+                <td><span class="badge {{ 'badge-danger' if p['stock']<=5 else 'badge-warning' }}">{{ p['stock'] }} unid.</span></td>
+                <td><a href="{{ url_for('editar_producto', pid=p['id']) }}" class="btn btn-secondary btn-sm">✏️ Reponer</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Ventas por mes -->
+{% if ventas_mes %}
+<div class="card mt-3">
+    <div class="card-header"><span class="card-title">📅 Ventas por Mes</span></div>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Mes</th><th>N° Ventas</th><th>Ingresos</th></tr></thead>
+            <tbody>
+            {% for m in ventas_mes %}
+            <tr>
+                <td><strong>{{ m['mes'] }}</strong></td>
+                <td>{{ m['total_ventas'] }}</td>
+                <td class="text-orange fw-bold">${{ "{:,.0f}".format(m['ingresos']) }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

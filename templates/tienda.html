@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyPet - Tienda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #FF6B2C;
+            --orange-dark: #E55A1F;
+            --orange-light: #FF8C5A;
+            --orange-pale: #FFF0E8;
+            --orange-soft: #FFE4D4;
+            --white: #FFFFFF;
+            --off-white: #FAFAF8;
+            --text: #2D2D2D;
+            --text-light: #6B6B6B;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --radius: 16px;
+            --shadow: 0 4px 20px rgba(255,107,44,0.12);
+            --shadow-lg: 0 12px 40px rgba(255,107,44,0.18);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Nunito', sans-serif; background: var(--off-white); color: var(--text); }
+
+        /* ── HEADER ── */
+        .header {
+            background: white;
+            box-shadow: 0 2px 16px rgba(255,107,44,0.12);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-top {
+            background: linear-gradient(90deg, var(--orange) 0%, var(--orange-light) 100%);
+            padding: 6px 32px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 700;
+        }
+        .header-main {
+            max-width: 1300px; margin: 0 auto; padding: 14px 32px;
+            display: flex; align-items: center; gap: 24px;
+        }
+        .logo {
+            font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--orange);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            text-decoration: none;
+        }
+        .logo-paw { font-size: 32px; animation: pawBounce 2s ease-in-out infinite; }
+        @keyframes pawBounce { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-5px) rotate(5deg)} }
+        .search-bar {
+            flex: 1; max-width: 500px;
+            display: flex; align-items: center;
+            background: var(--off-white); border: 2px solid #E8E8E0;
+            border-radius: 50px; overflow: hidden; transition: border-color 0.2s;
+        }
+        .search-bar:focus-within { border-color: var(--orange); }
+        .search-bar input {
+            flex: 1; padding: 10px 18px; border: none; background: transparent;
+            font-family: 'Nunito', sans-serif; font-size: 14px; outline: none;
+        }
+        .search-bar button {
+            padding: 10px 18px; background: var(--orange); border: none;
+            color: white; cursor: pointer; font-size: 16px; transition: background 0.2s;
+        }
+        .search-bar button:hover { background: var(--orange-dark); }
+        .header-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+        .greeting-chip {
+            background: var(--orange-pale); color: var(--orange);
+            padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 13px;
+            white-space: nowrap;
+        }
+        .cart-btn {
+            background: var(--orange); color: white; border: none;
+            padding: 11px 22px; border-radius: 50px;
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; position: relative;
+        }
+        .cart-btn:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,107,44,0.35); }
+        .cart-badge {
+            background: white; color: var(--orange);
+            border-radius: 50%; width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 900; transition: transform 0.2s;
+        }
+        .cart-badge.bump { animation: bump 0.3s ease; }
+        @keyframes bump { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4)} }
+        .btn-exit {
+            background: none; border: 2px solid #E8E8E0; color: #888;
+            padding: 9px 16px; border-radius: 10px; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .btn-exit:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* ── NAV CATEGORIAS ── */
+        .cat-nav {
+            background: white; border-top: 1px solid #F5F5F0;
+            overflow-x: auto;
+        }
+        .cat-nav-inner {
+            max-width: 1300px; margin: 0 auto; padding: 0 32px;
+            display: flex; gap: 4px;
+        }
+        .cat-tab {
+            padding: 12px 20px; border: none; background: none;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+            color: var(--text-light); cursor: pointer; white-space: nowrap;
+            border-bottom: 3px solid transparent; transition: all 0.2s;
+        }
+        .cat-tab:hover { color: var(--orange); }
+        .cat-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+        /* ── HERO BANNER ── */
+        .hero {
+            background: linear-gradient(135deg, #FF6B2C 0%, #FF4500 60%, #FF8C5A 100%);
+            padding: 60px 32px; text-align: center; color: white; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-pets { font-size: 52px; margin-bottom: 12px; }
+        .hero h1 {
+            font-family: 'Fredoka One', cursive; font-size: 44px;
+            margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .hero p { font-size: 17px; opacity: 0.92; margin-bottom: 24px; font-weight: 600; }
+        .hero-chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .hero-chip {
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: white; padding: 8px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 13px;
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .page-body {
+            max-width: 1300px; margin: 0 auto; padding: 32px;
+            display: grid; grid-template-columns: 220px 1fr; gap: 28px;
+        }
+
+        /* ── SIDEBAR FILTROS ── */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .filter-card {
+            background: white; border-radius: var(--radius);
+            box-shadow: var(--shadow); overflow: hidden;
+        }
+        .filter-card-head {
+            padding: 14px 18px; background: var(--orange-pale);
+            font-family: 'Fredoka One', cursive; font-size: 15px; color: var(--orange);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .filter-card-body { padding: 14px; }
+        .filter-opt {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 10px; border-radius: 10px; cursor: pointer;
+            transition: all 0.15s; font-weight: 700; font-size: 13px;
+            border: none; background: none; width: 100%; text-align: left;
+            color: var(--text); font-family: 'Nunito', sans-serif;
+        }
+        .filter-opt:hover { background: var(--orange-pale); color: var(--orange); }
+        .filter-opt.active { background: var(--orange); color: white; }
+        .filter-opt .opt-icon { font-size: 18px; width: 24px; text-align: center; }
+        .filter-opt .opt-count {
+            margin-left: auto; background: rgba(0,0,0,0.08);
+            border-radius: 20px; padding: 1px 8px; font-size: 11px;
+        }
+        .filter-opt.active .opt-count { background: rgba(255,255,255,0.25); }
+
+        /* ── PRODUCTS ── */
+        .products-area {}
+        .products-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+        .products-title {
+            font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--text);
+        }
+        .products-count { color: var(--text-light); font-size: 13px; font-weight: 600; }
+        .sort-select {
+            padding: 8px 14px; border: 2px solid #E8E8E0; border-radius: 10px;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px;
+            background: white; cursor: pointer; outline: none;
+        }
+        .sort-select:focus { border-color: var(--orange); }
+
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 18px;
+        }
+        .prod-card {
+            background: white; border-radius: var(--radius);
+            box-shadow: var(--shadow); overflow: hidden;
+            transition: all 0.25s; cursor: default;
+            display: flex; flex-direction: column;
+        }
+        .prod-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+        .prod-img-wrap {
+            background: var(--orange-pale); padding: 24px 20px;
+            text-align: center; font-size: 60px; position: relative;
+            min-height: 120px; display: flex; align-items: center; justify-content: center;
+        }
+        .prod-type-tag {
+            position: absolute; top: 8px; left: 8px;
+            background: var(--orange); color: white;
+            border-radius: 20px; padding: 2px 10px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .prod-type-tag.perro { background: #3498DB; }
+        .prod-type-tag.ambos { background: #9B59B6; }
+        .prod-badge-new {
+            position: absolute; top: 8px; right: 8px;
+            background: var(--success); color: white;
+            border-radius: 20px; padding: 2px 8px;
+            font-size: 10px; font-weight: 800;
+        }
+        .prod-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
+        .prod-cat {
+            font-size: 10px; color: #aaa; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+        }
+        .prod-name {
+            font-weight: 800; font-size: 14px; margin-bottom: 6px;
+            line-height: 1.3; color: var(--text);
+        }
+        .prod-desc {
+            font-size: 12px; color: var(--text-light); margin-bottom: 10px;
+            line-height: 1.4; flex: 1;
+        }
+        .prod-bottom { margin-top: auto; }
+        .prod-price-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .prod-price {
+            font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--orange);
+        }
+        .prod-stock {
+            font-size: 11px; font-weight: 700;
+        }
+        .prod-stock.ok { color: var(--success); }
+        .prod-stock.low { color: #F39C12; }
+        .prod-stock.out { color: var(--danger); }
+        .btn-add {
+            width: 100%; padding: 10px; background: var(--orange); color: white;
+            border: none; border-radius: 10px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 13px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-add:hover { background: var(--orange-dark); transform: translateY(-1px); }
+        .btn-add.added { background: var(--success); }
+        .btn-add:disabled { background: #E0E0E0; color: #aaa; cursor: not-allowed; transform: none; }
+
+        .no-results {
+            grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-light);
+        }
+        .no-results .icon { font-size: 60px; margin-bottom: 12px; }
+        .no-results h3 { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--text); }
+
+        /* ── CART DRAWER ── */
+        .overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45); z-index: 200;
+            backdrop-filter: blur(2px);
+        }
+        .overlay.open { display: block; }
+        .cart-drawer {
+            position: fixed; right: -440px; top: 0; bottom: 0; width: 440px;
+            background: white; z-index: 201;
+            box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+            transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column;
+        }
+        .cart-drawer.open { right: 0; }
+        .cart-drawer-head {
+            padding: 22px 24px; border-bottom: 2px solid var(--orange-pale);
+            display: flex; align-items: center; justify-content: space-between;
+            background: white;
+        }
+        .cart-drawer-head h3 {
+            font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--orange);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .btn-close-cart {
+            width: 36px; height: 36px; border: 2px solid #E8E8E0; border-radius: 50%;
+            background: none; font-size: 18px; cursor: pointer; color: #888;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .btn-close-cart:hover { border-color: var(--danger); color: var(--danger); background: #FEF0EF; }
+        .cart-body { flex: 1; overflow-y: auto; padding: 0; }
+        .cart-empty-state {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; height: 100%; padding: 40px;
+            color: var(--text-light); text-align: center;
+        }
+        .cart-empty-state .big-icon { font-size: 70px; margin-bottom: 16px; opacity: 0.5; }
+        .cart-empty-state h4 { font-family: 'Fredoka One', cursive; font-size: 20px; color: var(--text); margin-bottom: 6px; }
+        .cart-item-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 24px; border-bottom: 1px solid #F8F8F5;
+            transition: background 0.15s;
+        }
+        .cart-item-row:hover { background: #FFFAF7; }
+        .cart-item-emoji { font-size: 32px; width: 48px; text-align: center; flex-shrink: 0; }
+        .cart-item-info { flex: 1; min-width: 0; }
+        .cart-item-name { font-weight: 800; font-size: 13px; margin-bottom: 2px; }
+        .cart-item-price { font-size: 12px; color: var(--text-light); }
+        .qty-control { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .qty-btn {
+            width: 28px; height: 28px; border: 2px solid var(--orange); border-radius: 8px;
+            background: white; color: var(--orange); font-size: 16px; font-weight: 800;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; line-height: 1;
+        }
+        .qty-btn:hover { background: var(--orange); color: white; }
+        .qty-num { font-weight: 900; min-width: 24px; text-align: center; font-size: 15px; }
+        .cart-item-subtotal { font-weight: 800; color: var(--orange); font-size: 14px; min-width: 72px; text-align: right; flex-shrink: 0; }
+        .btn-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 4px; transition: color 0.15s; }
+        .btn-remove:hover { color: var(--danger); }
+        .cart-footer {
+            border-top: 2px solid var(--orange-pale); padding: 20px 24px;
+            background: var(--off-white);
+        }
+        .cart-summary { margin-bottom: 16px; }
+        .summary-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 4px 0; font-size: 14px;
+        }
+        .summary-row.total {
+            border-top: 2px solid var(--orange-pale); margin-top: 8px; padding-top: 12px;
+        }
+        .summary-total-label { font-family: 'Fredoka One', cursive; font-size: 18px; }
+        .summary-total-val { font-family: 'Fredoka One', cursive; font-size: 26px; color: var(--orange); }
+        .btn-webpay {
+            width: 100%; padding: 16px; margin-bottom: 8px;
+            background: #003087; color: white; border: none; border-radius: 13px;
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-webpay:hover { background: #0041B9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,65,185,0.3); }
+        .btn-webpay:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .secure-note {
+            text-align: center; font-size: 11px; color: #bbb; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .btn-clear {
+            width: 100%; padding: 10px; background: none; border: 2px solid #E8E8E0;
+            color: #888; border-radius: 10px; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 8px;
+            transition: all 0.2s;
+        }
+        .btn-clear:hover { border-color: var(--danger); color: var(--danger); }
+
+        /* ── LOADING / MODAL ── */
+        .modal-bg {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 400;
+            align-items: center; justify-content: center;
+        }
+        .modal-bg.show { display: flex; }
+        .modal-box {
+            background: white; border-radius: 24px; padding: 40px;
+            max-width: 400px; width: 90vw; text-align: center;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+        .modal-icon { font-size: 64px; margin-bottom: 16px; }
+        .modal-title { font-family: 'Fredoka One', cursive; font-size: 24px; margin-bottom: 8px; }
+        .modal-sub { color: var(--text-light); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+        .modal-info {
+            background: var(--off-white); border-radius: 12px; padding: 16px;
+            text-align: left; margin-bottom: 20px;
+        }
+        .modal-info-row {
+            display: flex; justify-content: space-between; margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .modal-info-row:last-child { margin-bottom: 0; }
+        .modal-info-row .label { color: var(--text-light); }
+        .modal-info-row .val { font-weight: 800; }
+        .modal-info-row .val.green { color: var(--success); }
+        .modal-btns { display: flex; gap: 10px; }
+        .btn-modal-primary {
+            flex: 1; padding: 14px; background: var(--success); color: white;
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-modal-primary:hover { background: #27AE60; }
+        .btn-modal-sec {
+            flex: 1; padding: 14px; background: var(--off-white); color: var(--text);
+            border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .btn-modal-sec:hover { background: #EFEFE8; }
+        .loading-bg {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 500;
+            align-items: center; justify-content: center;
+        }
+        .loading-bg.show { display: flex; }
+        .loading-box {
+            background: white; border-radius: 20px; padding: 40px;
+            text-align: center; max-width: 300px;
+        }
+        .spinner {
+            width: 52px; height: 52px; border: 4px solid #F5F5F0;
+            border-top-color: var(--orange); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        .toast {
+            position: fixed; top: 80px; right: 24px; z-index: 600;
+            background: var(--success); color: white; padding: 14px 22px;
+            border-radius: 14px; font-weight: 800; font-size: 14px;
+            box-shadow: 0 6px 20px rgba(46,204,113,0.4);
+            transform: translateX(120%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: var(--danger); box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: white; border-top: 1px solid #F0F0E8;
+            padding: 24px 32px; margin-top: 40px; text-align: center;
+            color: var(--text-light); font-size: 13px; font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .page-body { grid-template-columns: 1fr; padding: 16px; }
+            .sidebar { flex-direction: row; overflow-x: auto; }
+            .filter-card { min-width: 160px; }
+            .hero { padding: 40px 20px; }
+            .hero h1 { font-size: 32px; }
+            .header-main { padding: 12px 16px; gap: 12px; }
+            .search-bar { max-width: 100%; }
+            .cart-drawer { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+    <div class="header-top">
+        <span>&#128062; Envio gratis en compras sobre $30.000</span>
+        <span>&#128222; Atencion al cliente: happypet@tienda.cl</span>
+    </div>
+    <div class="header-main">
+        <a href="/tienda" class="logo">
+            <span class="logo-paw">&#128062;</span> HappyPet
+        </a>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar productos para tu mascota...">
+            <button onclick="doSearch()">&#128269;</button>
+        </div>
+        <div class="header-actions">
+            {% if session.cliente_nombre %}
+            <div class="greeting-chip">Hola, {{ session.cliente_nombre }}!</div>
+            {% endif %}
+            <button class="cart-btn" onclick="toggleCart()">
+                &#128722; Carrito
+                <span class="cart-badge" id="cart-badge">0</span>
+            </button>
+            <a href="/logout-cliente" class="btn-exit">Salir</a>
+        </div>
+    </div>
+    <!-- Nav categorias -->
+    <nav class="cat-nav">
+        <div class="cat-nav-inner">
+            <button class="cat-tab active" data-cat="">Todo</button>
+            {% set cats = [] %}
+            {% for p in productos %}
+                {% if p['categoria'] not in cats %}
+                    {% set _ = cats.append(p['categoria']) %}
+                {% endif %}
+            {% endfor %}
+            {% for c in cats %}
+            <button class="cat-tab" data-cat="{{ c }}">{{ c }}</button>
+            {% endfor %}
+        </div>
+    </nav>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+    <div class="hero-pets">&#128049; &#128054;</div>
+    <h1>Todo para tu mascota feliz</h1>
+    <p>Productos premium seleccionados para gatos y perros</p>
+    <div class="hero-chips">
+        <span class="hero-chip">&#10003; Envio rapido</span>
+        <span class="hero-chip">&#10003; Productos premium</span>
+        <span class="hero-chip">&#10003; Pago seguro Webpay</span>
+        <span class="hero-chip">&#10003; Garantia de calidad</span>
+    </div>
+</div>
+
+<!-- ── BODY ── -->
+<div class="page-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <!-- Filtro animal -->
+        <div class="filter-card">
+            <div class="filter-card-head">&#128062; Tipo de Mascota</div>
+            <div class="filter-card-body" id="tipo-filters">
+                <button class="filter-opt active" data-tipo="" onclick="setTipo(this,'')">
+                    <span class="opt-icon">&#128062;</span> Todos
+                    <span class="opt-count" id="cnt-all">{{ productos|length }}</span>
+                </button>
+                <button class="filter-opt" data-tipo="Gato" onclick="setTipo(this,'Gato')">
+                    <span class="opt-icon">&#128049;</span> Gatos
+                    <span class="opt-count" id="cnt-gato">{{ productos|selectattr('tipo_mascota','eq','Gato')|list|length }}</span>
+                </button>
+                <button class="filter-opt" data-tipo="Perro" onclick="setTipo(this,'Perro')">
+                    <span class="opt-icon">&#128054;</span> Perros
+                    <span class="opt-count" id="cnt-perro">{{ productos|selectattr('tipo_mascota','eq','Perro')|list|length }}</span>
+                </button>
+                <button class="filter-opt" data-tipo="Ambos" onclick="setTipo(this,'Ambos')">
+                    <span class="opt-icon">&#128062;</span> Ambos
+                    <span class="opt-count" id="cnt-ambos">{{ productos|selectattr('tipo_mascota','eq','Ambos')|list|length }}</span>
+                </button>
+            </div>
+        </div>
+        <!-- Filtro precio -->
+        <div class="filter-card">
+            <div class="filter-card-head">&#128176; Precio</div>
+            <div class="filter-card-body">
+                <button class="filter-opt active" data-price="" onclick="setPrice(this,'')">
+                    <span class="opt-icon">&#128176;</span> Todos
+                </button>
+                <button class="filter-opt" data-price="0-10000" onclick="setPrice(this,'0-10000')">
+                    <span class="opt-icon">&#128178;</span> Hasta $10.000
+                </button>
+                <button class="filter-opt" data-price="10000-25000" onclick="setPrice(this,'10000-25000')">
+                    <span class="opt-icon">&#128178;</span> $10.000 - $25.000
+                </button>
+                <button class="filter-opt" data-price="25000-99999" onclick="setPrice(this,'25000-99999')">
+                    <span class="opt-icon">&#128182;</span> Mas de $25.000
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- PRODUCTS AREA -->
+    <main class="products-area">
+        <div class="products-header">
+            <div>
+                <div class="products-title" id="section-title">Todos los Productos</div>
+                <div class="products-count" id="prod-count">{{ productos|length }} productos disponibles</div>
+            </div>
+            <select class="sort-select" id="sort-sel" onchange="sortProducts()">
+                <option value="default">Orden predeterminado</option>
+                <option value="price-asc">Precio: menor a mayor</option>
+                <option value="price-desc">Precio: mayor a menor</option>
+                <option value="name-asc">Nombre: A-Z</option>
+            </select>
+        </div>
+
+        <div class="products-grid" id="products-grid">
+            {% for p in productos %}
+            <div class="prod-card"
+                 data-id="{{ p['id'] }}"
+                 data-nombre="{{ p['nombre'] }}"
+                 data-nombre-lower="{{ p['nombre']|lower }}"
+                 data-precio="{{ p['precio'] }}"
+                 data-stock="{{ p['stock'] }}"
+                 data-tipo="{{ p['tipo_mascota'] }}"
+                 data-cat="{{ p['categoria'] }}"
+                 data-emoji="{{ p['imagen'] }}">
+                <div class="prod-img-wrap">
+                    <span class="{{ 'prod-type-tag perro' if p['tipo_mascota']=='Perro' else 'prod-type-tag ambos' if p['tipo_mascota']=='Ambos' else 'prod-type-tag' }}">
+                        {{ p['tipo_mascota'] }}
+                    </span>
+                    {{ p['imagen'] }}
+                    {% if p['stock'] <= 5 and p['stock'] > 0 %}
+                    <span class="prod-badge-new">Ultimas unidades</span>
+                    {% endif %}
+                </div>
+                <div class="prod-body">
+                    <div class="prod-cat">{{ p['categoria'] }}</div>
+                    <div class="prod-name">{{ p['nombre'] }}</div>
+                    <div class="prod-desc">{{ p['descripcion'][:65] if p['descripcion'] else 'Producto de calidad premium para tu mascota.' }}{% if p['descripcion'] and p['descripcion']|length > 65 %}...{% endif %}</div>
+                    <div class="prod-bottom">
+                        <div class="prod-price-row">
+                            <div class="prod-price">${{ "{:,.0f}".format(p['precio']) }}</div>
+                            <div class="prod-stock {{ 'low' if p['stock']<=5 else 'ok' }}">
+                                {{ 'Solo ' + p['stock']|string if p['stock']<=5 else 'En stock' }}
+                            </div>
+                        </div>
+                        {% if p['stock'] > 0 %}
+                        <button class="btn-add" id="addbtn-{{ p['id'] }}"
+                            onclick="addToCart({{ p['id'] }}, '{{ p['nombre']|replace("'","") }}', {{ p['precio'] }}, {{ p['stock'] }}, '{{ p['imagen'] }}')">
+                            + Agregar al carrito
+                        </button>
+                        {% else %}
+                        <button class="btn-add" disabled>Sin stock</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="no-results" id="no-results" style="display:none">
+                <div class="icon">&#128269;</div>
+                <h3>Sin resultados</h3>
+                <p>Prueba con otro filtro o busqueda</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+    &#128062; HappyPet &mdash; Tienda de mascotas &mdash; Pagos seguros con Webpay Plus Transbank
+</footer>
+
+<!-- ── CART OVERLAY + DRAWER ── -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-head">
+        <h3>&#128722; Mi Carrito</h3>
+        <button class="btn-close-cart" onclick="toggleCart()">&#10005;</button>
+    </div>
+    <div class="cart-body" id="cart-body">
+        <div class="cart-empty-state" id="cart-empty">
+            <div class="big-icon">&#128722;</div>
+            <h4>Tu carrito esta vacio</h4>
+            <p>Agrega productos desde la tienda</p>
+        </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Subtotal</span><span id="c-sub">$0</span>
+            </div>
+            <div class="summary-row">
+                <span style="color:#bbb;font-size:12px">IVA incluido en precios</span>
+            </div>
+            <div class="summary-row total">
+                <span class="summary-total-label">Total</span>
+                <span class="summary-total-val" id="c-total">$0</span>
+            </div>
+        </div>
+        <button class="btn-webpay" id="btn-pagar" onclick="iniciarPago()">
+            &#128179; Pagar con Webpay
+        </button>
+        <div class="secure-note">&#128274; Pago 100% seguro &mdash; Webpay Plus Transbank</div>
+        <button class="btn-clear" onclick="limpiarCarrito()">Vaciar carrito</button>
+    </div>
+</div>
+
+<!-- ── LOADING ── -->
+<div class="loading-bg" id="loading-bg">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <div style="font-family:'Fredoka One',cursive;font-size:20px;color:var(--orange);margin-bottom:6px">Procesando pago</div>
+        <div style="color:#aaa;font-size:13px">Conectando con Webpay Transbank...</div>
+    </div>
+</div>
+
+<!-- ── DEMO MODAL ── -->
+<div class="modal-bg" id="demo-modal">
+    <div class="modal-box">
+        <div class="modal-icon">&#128179;</div>
+        <div class="modal-title" style="color:#003087">Webpay Plus</div>
+        <div class="modal-sub">Modo integracion activo.<br>En produccion el cliente paga directamente en Transbank.</div>
+        <div class="modal-info" id="modal-info-content"></div>
+        <div class="modal-btns">
+            <button class="btn-modal-primary" onclick="confirmarPagoDemo()">&#10003; Confirmar Pago</button>
+            <a href="/ventas" class="btn-modal-sec">Ver mis pedidos</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Estado ──────────────────────────────────────────────────────────
+let cart = {};
+let currentVentaId = null;
+let activeTipo = '';
+let activeCat  = '';
+let activePrice = '';
+
+// ── Filtros ─────────────────────────────────────────────────────────
+function setTipo(el, tipo) {
+    document.querySelectorAll('[data-tipo]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    activeTipo = tipo;
+    applyFilters();
+}
+function setPrice(el, range) {
+    document.querySelectorAll('[data-price]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    activePrice = range;
+    applyFilters();
+}
+document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeCat = tab.dataset.cat;
+        applyFilters();
+    });
+});
+document.getElementById('search-input').addEventListener('input', applyFilters);
+
+function doSearch() { applyFilters(); }
+
+function applyFilters() {
+    const q = document.getElementById('search-input').value.toLowerCase().trim();
+    let visible = 0;
+    document.querySelectorAll('.prod-card').forEach(card => {
+        const tipo  = card.dataset.tipo;
+        const cat   = card.dataset.cat;
+        const precio = parseFloat(card.dataset.precio);
+        const nombre = card.dataset.nombreLower;
+
+        const matchTipo  = !activeTipo  || tipo === activeTipo || tipo === 'Ambos';
+        const matchCat   = !activeCat   || cat === activeCat;
+        const matchSearch= !q           || nombre.includes(q);
+        let matchPrice   = true;
+        if (activePrice) {
+            const [mn, mx] = activePrice.split('-').map(Number);
+            matchPrice = precio >= mn && precio <= mx;
+        }
+        const show = matchTipo && matchCat && matchSearch && matchPrice;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    document.getElementById('no-results').style.display = visible === 0 ? 'flex' : 'none';
+    document.getElementById('prod-count').textContent = visible + ' producto' + (visible !== 1 ? 's' : '') + ' disponible' + (visible !== 1 ? 's' : '');
+}
+
+function sortProducts() {
+    const val = document.getElementById('sort-sel').value;
+    const grid = document.getElementById('products-grid');
+    const cards = [...grid.querySelectorAll('.prod-card')];
+    cards.sort((a, b) => {
+        if (val === 'price-asc')  return parseFloat(a.dataset.precio) - parseFloat(b.dataset.precio);
+        if (val === 'price-desc') return parseFloat(b.dataset.precio) - parseFloat(a.dataset.precio);
+        if (val === 'name-asc')   return a.dataset.nombre.localeCompare(b.dataset.nombre);
+        return 0;
+    });
+    cards.forEach(c => grid.insertBefore(c, document.getElementById('no-results')));
+}
+
+// ── Carrito ──────────────────────────────────────────────────────────
+function addToCart(id, nombre, precio, stock, emoji) {
+    if (cart[id]) {
+        if (cart[id].qty >= stock) { showToast('Sin mas stock disponible', true); return; }
+        cart[id].qty++;
+    } else {
+        cart[id] = { id, nombre, precio, stock, emoji, qty: 1 };
+    }
+    renderCart();
+    // Animacion boton
+    const btn = document.getElementById('addbtn-' + id);
+    if (btn) {
+        btn.textContent = '&#10003; Agregado!';
+        btn.classList.add('added');
+        setTimeout(() => { btn.textContent = '+ Agregar al carrito'; btn.classList.remove('added'); }, 1500);
+    }
+    // Bump badge
+    const badge = document.getElementById('cart-badge');
+    badge.classList.remove('bump');
+    void badge.offsetWidth;
+    badge.classList.add('bump');
+    showToast(nombre + ' agregado al carrito');
+}
+
+function changeQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    renderCart();
+}
+
+function limpiarCarrito() {
+    if (!Object.keys(cart).length) return;
+    if (confirm('Vaciar el carrito?')) { cart = {}; renderCart(); }
+}
+
+function renderCart() {
+    const items = Object.values(cart);
+    const total = items.reduce((s,i) => s + i.precio * i.qty, 0);
+    const totalQty = items.reduce((s,i) => s + i.qty, 0);
+
+    // Actualizar badge
+    const badge = document.getElementById('cart-badge');
+    badge.textContent = totalQty;
+
+    const body   = document.getElementById('cart-body');
+    const footer = document.getElementById('cart-footer');
+    const empty  = document.getElementById('cart-empty');
+
+    if (!items.length) {
+        // Carrito vacio
+        body.innerHTML = '';
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'cart-empty-state';
+        emptyDiv.id = 'cart-empty';
+        emptyDiv.innerHTML = '<div class="big-icon">&#128722;</div><h4>Tu carrito esta vacio</h4><p>Agrega productos desde la tienda</p>';
+        body.appendChild(emptyDiv);
+        footer.style.display = 'none';
+        return;
+    }
+
+    // Construir HTML de items directamente
+    let html = '';
+    items.forEach(it => {
+        const sub = it.precio * it.qty;
+        html += `
+        <div class="cart-item-row" id="citem-${it.id}">
+            <div class="cart-item-emoji">${it.emoji}</div>
+            <div class="cart-item-info">
+                <div class="cart-item-name">${it.nombre}</div>
+                <div class="cart-item-price">$${it.precio.toLocaleString('es-CL')} c/u</div>
+            </div>
+            <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty(${it.id},-1)">-</button>
+                <span class="qty-num">${it.qty}</span>
+                <button class="qty-btn" onclick="changeQty(${it.id},1)">+</button>
+            </div>
+            <div class="cart-item-subtotal">$${sub.toLocaleString('es-CL')}</div>
+            <button class="btn-remove" onclick="removeItem(${it.id})" title="Eliminar">x</button>
+        </div>`;
+    });
+
+    body.innerHTML = html;
+    footer.style.display = 'block';
+
+    document.getElementById('c-sub').textContent   = '$' + total.toLocaleString('es-CL');
+    document.getElementById('c-total').textContent = '$' + total.toLocaleString('es-CL');
+}
+
+function removeItem(id) {
+    delete cart[id];
+    renderCart();
+}
+
+function toggleCart() {
+    document.getElementById('cart-drawer').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// ── Pago ─────────────────────────────────────────────────────────────
+async function iniciarPago() {
+    const items = Object.values(cart).map(i => ({ id: i.id, cantidad: i.qty }));
+    if (!items.length) return;
+    document.getElementById('loading-bg').classList.add('show');
+    document.getElementById('btn-pagar').disabled = true;
+    try {
+        const res = await fetch('/ventas/procesar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cliente_nombre: '{{ session.cliente_nombre or "Cliente" }}',
+                cliente_email:  '{{ session.cliente_email or "" }}',
+                items
+            })
+        });
+        const data = await res.json();
+        document.getElementById('loading-bg').classList.remove('show');
+        if (data.success && data.webpay_url && data.token) {
+            // Redireccion real a Transbank
+            const form = document.createElement('form');
+            form.method = 'POST'; form.action = data.webpay_url;
+            const inp = document.createElement('input');
+            inp.type = 'hidden'; inp.name = 'token_ws'; inp.value = data.token;
+            form.appendChild(inp); document.body.appendChild(form); form.submit();
+        } else {
+            // Modo demo
+            currentVentaId = data.venta_id;
+            const total = Object.values(cart).reduce((s,i)=>s+i.precio*i.qty,0);
+            document.getElementById('modal-info-content').innerHTML = `
+                <div class="modal-info-row"><span class="label">N. Orden:</span><span class="val">${data.venta_id || '-'}</span></div>
+                <div class="modal-info-row"><span class="label">Monto:</span><span class="val text-orange">$${total.toLocaleString('es-CL')}</span></div>
+                <div class="modal-info-row"><span class="label">Estado:</span><span class="val green">Autorizado</span></div>
+                <div class="modal-info-row"><span class="label">Metodo:</span><span class="val">Webpay Plus (Demo)</span></div>
+            `;
+            document.getElementById('demo-modal').classList.add('show');
+        }
+    } catch(e) {
+        document.getElementById('loading-bg').classList.remove('show');
+        document.getElementById('btn-pagar').disabled = false;
+        showToast('Error al conectar: ' + e.message, true);
+    }
+}
+
+async function confirmarPagoDemo() {
+    if (!currentVentaId) return;
+    await fetch('/ventas/' + currentVentaId + '/pagar-demo', { method: 'POST' });
+    document.getElementById('demo-modal').classList.remove('show');
+    cart = {}; renderCart(); toggleCart();
+    showToast('Pago realizado! Gracias por tu compra en HappyPet');
+}
+
+// ── Toast ────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, isError=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    void t.offsetWidth;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

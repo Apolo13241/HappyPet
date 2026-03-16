@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Productos{% endblock %}
+{% block page_title %}🛍️ Productos{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-between align-center mb-3">
+    <form class="search-bar" method="get">
+        <input name="search" value="{{ search }}" placeholder="🔍 Buscar producto...">
+        <select name="tipo">
+            <option value="">Todos los animales</option>
+            <option value="Gato" {% if tipo=='Gato' %}selected{% endif %}>🐱 Gatos</option>
+            <option value="Perro" {% if tipo=='Perro' %}selected{% endif %}>🐶 Perros</option>
+            <option value="Ambos" {% if tipo=='Ambos' %}selected{% endif %}>🐾 Ambos</option>
+        </select>
+        <select name="categoria">
+            <option value="">Todas las categorías</option>
+            {% for c in categorias %}
+            <option value="{{ c[0] }}" {% if cat==c[0] %}selected{% endif %}>{{ c[0] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-secondary btn-sm">Filtrar</button>
+        {% if search or tipo or cat %}
+        <a href="{{ url_for('productos') }}" class="btn btn-secondary btn-sm">✕ Limpiar</a>
+        {% endif %}
+    </form>
+    <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary">➕ Nuevo Producto</a>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        {% if productos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th><th>Categoría</th><th>Animal</th>
+                    <th>Precio</th><th>Stock</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in productos %}
+            <tr>
+                <td>
+                    <span style="font-size:20px">{{ p['imagen'] }}</span>
+                    <strong style="margin-left:8px">{{ p['nombre'] }}</strong>
+                    {% if p['descripcion'] %}
+                    <div style="font-size:12px;color:#888;margin-top:2px">{{ p['descripcion'][:60] }}...</div>
+                    {% endif %}
+                </td>
+                <td><span class="badge badge-info">{{ p['categoria'] }}</span></td>
+                <td>
+                    <span class="badge {{ 'badge-orange' if p['tipo_mascota']=='Gato' else 'badge-success' if p['tipo_mascota']=='Perro' else 'badge-info' }}">
+                        {{ '🐱' if p['tipo_mascota']=='Gato' else '🐶' if p['tipo_mascota']=='Perro' else '🐾' }}
+                        {{ p['tipo_mascota'] }}
+                    </span>
+                </td>
+                <td class="fw-bold text-orange">${{ "{:,.0f}".format(p['precio']) }}</td>
+                <td>
+                    <span class="badge {{ 'badge-danger' if p['stock']<=5 else 'badge-warning' if p['stock']<=10 else 'badge-success' }}">
+                        {{ p['stock'] }} unid.
+                    </span>
+                </td>
+                <td>
+                    <div style="display:flex;gap:6px">
+                        <a href="{{ url_for('editar_producto', pid=p['id']) }}" class="btn btn-secondary btn-sm">✏️</a>
+                        <form method="post" action="{{ url_for('eliminar_producto', pid=p['id']) }}" onsubmit="return confirm('¿Eliminar este producto?')">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">🛍️</div>
+            <h3>No hay productos</h3>
+            <p>¡Agrega tu primer producto para la tienda!</p>
+            <a href="{{ url_for('nuevo_producto') }}" class="btn btn-primary mt-2">➕ Agregar Producto</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Pago Exitoso{% endblock %}
+{% block page_title %}✅ Pago Confirmado{% endblock %}
+{% block content %}
+<div style="max-width:600px;margin:0 auto;text-align:center">
+<div class="card">
+    <div class="card-body" style="padding:48px">
+        <div style="font-size:80px;margin-bottom:16px">🎉</div>
+        <h2 style="font-family:'Fredoka One',cursive;font-size:28px;color:var(--orange);margin-bottom:8px">¡Pago Exitoso!</h2>
+        <p style="color:#888;margin-bottom:24px">La transacción fue procesada correctamente por Webpay de Transbank</p>
+        {% if venta %}
+        <div style="background:var(--orange-pale);border-radius:16px;padding:20px;text-align:left;margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="color:#888">N° Venta:</span><strong>{{ venta['numero_venta'] }}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="color:#888">Cliente:</span><strong>{{ venta['cliente_nombre'] }}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+                <span style="color:#888">Total Pagado:</span>
+                <strong style="color:var(--orange);font-size:18px">${{ "{:,.0f}".format(venta['total']) }}</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if resultado %}
+        <div style="background:#E9F7EF;border-radius:12px;padding:16px;margin-bottom:24px;font-size:13px;text-align:left">
+            <div style="font-weight:800;color:#1E8449;margin-bottom:8px">✅ Detalles Transbank</div>
+            <div>Código Autorización: <strong>{{ resultado.get('authorization_code', 'N/A') }}</strong></div>
+            <div>Tipo Tarjeta: <strong>{{ resultado.get('payment_type_code', 'N/A') }}</strong></div>
+        </div>
+        {% endif %}
+        <div style="display:flex;gap:12px;justify-content:center">
+            <a href="{{ url_for('ventas') }}" class="btn btn-secondary">Ver Ventas</a>
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">🛒 Nueva Venta</a>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Detalle Venta{% endblock %}
+{% block page_title %}Detalle de Venta{% endblock %}
+{% block content %}
+<div style="max-width:800px">
+
+{% if not venta %}
+<div class="card">
+    <div class="card-body" style="text-align:center;padding:48px">
+        <div style="font-size:60px;margin-bottom:16px">&#128269;</div>
+        <h3 style="font-family:'Fredoka One',cursive;color:var(--orange)">Venta no encontrada</h3>
+        <a href="{{ url_for('ventas') }}" class="btn btn-secondary mt-2">Volver al historial</a>
+    </div>
+</div>
+{% else %}
+<div class="card mb-3">
+    <div class="card-header">
+        <span class="card-title">{{ venta['numero_venta'] if venta['numero_venta'] else 'Venta #' + venta['id']|string }}</span>
+        {% if venta['estado'] %}
+        <span class="badge {{ 'badge-success' if venta['estado']=='pagado' else 'badge-warning' if venta['estado']=='pendiente' else 'badge-danger' }}">
+            {{ venta['estado'].capitalize() }}
+        </span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="grid-2 mb-3">
+            <div>
+                <div style="font-size:12px;color:#888;font-weight:700;text-transform:uppercase;margin-bottom:4px">Cliente</div>
+                <div class="fw-bold">{{ venta['cliente_nombre'] or '---' }}</div>
+                {% if venta['cliente_email'] %}
+                <div style="font-size:13px;color:#888">{{ venta['cliente_email'] }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <div style="font-size:12px;color:#888;font-weight:700;text-transform:uppercase;margin-bottom:4px">Informacion de Pago</div>
+                <div class="fw-bold">{{ venta['creado_en'][:16] if venta['creado_en'] else 'N/A' }}</div>
+                <div style="font-size:13px;color:#888">Metodo: {{ venta['metodo_pago'] or 'Webpay' }}</div>
+            </div>
+        </div>
+
+        {% if detalle %}
+        <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Producto</th><th>Categoria</th><th>Cantidad</th><th>Precio Unit.</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+            {% for d in detalle %}
+            <tr>
+                <td>
+                    <span style="font-size:20px">{{ d['imagen'] if d['imagen'] else '' }}</span>
+                    <strong style="margin-left:8px">{{ d['nombre'] }}</strong>
+                </td>
+                <td><span class="badge badge-info">{{ d['categoria'] or '---' }}</span></td>
+                <td>{{ d['cantidad'] }}</td>
+                <td>${{ "{:,.0f}".format(d['precio_unitario']) }}</td>
+                <td class="text-orange fw-bold">${{ "{:,.0f}".format(d['subtotal']) }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <p style="color:#888;text-align:center;padding:20px">Sin items registrados</p>
+        {% endif %}
+
+        <div style="text-align:right;margin-top:16px;padding:20px;background:var(--orange-pale);border-radius:12px">
+            <div style="font-size:13px;color:#888;margin-bottom:4px">Total pagado</div>
+            <div style="font-family:'Fredoka One',cursive;font-size:26px;color:var(--orange)">
+                ${{ "{:,.0f}".format(venta['total']) if venta['total'] else '0' }}
+            </div>
+        </div>
+
+        <div class="mt-2" style="display:flex;gap:10px">
+            <a href="{{ url_for('ventas') }}" class="btn btn-secondary">Volver al historial</a>
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">Nueva Venta</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}
