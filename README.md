@@ -59,7 +59,7 @@ petshop/
 El sistema usa el **ambiente de integración** de Transbank (no requiere credenciales reales):
 
 - **Endpoint:** `https://webpay3gint.transbank.cl`
-- **Commerce Code:** `597055555532` (credenciales de prueba oficiales)
+- **Commerce Code:** `VISA	4051 8856 0044 6623 CVV 123 cualquier fecha de expiración	Genera transacciones aprobadas.` (credenciales de prueba oficiales)
 - **Flujo:**
   1. Sistema crea la venta y llama a la API de Webpay
   2. Usuario es redirigido al portal de pago de Transbank
