@@ -1,0 +1,309 @@
+{
+  "id": "happypet-selenium-suite",
+  "version": "2.0",
+  "name": "HappyPet - Suite de Pruebas Automatizadas",
+  "url": "http://127.0.0.1:5000",
+  "tests": [
+    {
+      "id": "test-001",
+      "name": "CP-01: Login exitoso como administrador",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('username')[0].value='admin';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('password')[0].value='admin123';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        },
+        {
+          "command": "waitForElementVisible",
+          "target": "css=.sidebar",
+          "value": "5000"
+        }
+      ]
+    },
+    {
+      "id": "test-002",
+      "name": "CP-02: Login incorrecto",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('username')[0].value='admin';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('password')[0].value='mala';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "test-003",
+      "name": "CP-03: Cliente entra a tienda",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "xpath=//button[contains(text(),'Soy Cliente')]",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('cliente_nombre')[0].value='Juan Perez';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('cliente_email')[0].value='juan@test.cl';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button.btn-client",
+          "value": ""
+        },
+        {
+          "command": "waitForElementVisible",
+          "target": "css=.products-grid",
+          "value": "5000"
+        }
+      ]
+    },
+    {
+      "id": "test-004",
+      "name": "CP-04: Buscar productos",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/tienda",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.querySelector('#search-input').value='alimento';",
+          "value": ""
+        },
+        {
+          "command": "pause",
+          "target": "1000",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "test-005",
+      "name": "CP-05: Filtrar gatos",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/tienda",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "xpath=//button[@data-tipo='Gato']",
+          "value": ""
+        },
+        {
+          "command": "assertElementPresent",
+          "target": "css=.prod-card",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "test-006",
+      "name": "CP-06: Crear producto",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('username')[0].value='admin';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('password')[0].value='admin123';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        },
+        {
+          "command": "open",
+          "target": "/productos/nuevo",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('nombre')[0].value='Producto Selenium';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('precio')[0].value='12990';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('stock')[0].value='10';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('descripcion')[0].value='Creado automaticamente';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "test-007",
+      "name": "CP-07: Crear cliente",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('username')[0].value='admin';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('password')[0].value='admin123';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        },
+        {
+          "command": "open",
+          "target": "/clientes/nuevo",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('nombre')[0].value='Cliente Selenium';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('email')[0].value='cliente@test.cl';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('telefono')[0].value='+56911111111';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "test-008",
+      "name": "CP-08: Ver reportes",
+      "commands": [
+        {
+          "command": "open",
+          "target": "/login",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('username')[0].value='admin';",
+          "value": ""
+        },
+        {
+          "command": "executeScript",
+          "target": "document.getElementsByName('password')[0].value='admin123';",
+          "value": ""
+        },
+        {
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "value": ""
+        },
+        {
+          "command": "open",
+          "target": "/reportes",
+          "value": ""
+        },
+        {
+          "command": "assertElementPresent",
+          "target": "css=table",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "suite-01",
+      "name": "Suite Completa",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 30,
+      "tests": [
+        "test-001",
+        "test-002",
+        "test-003",
+        "test-004",
+        "test-005",
+        "test-006",
+        "test-007",
+        "test-008"
+      ]
+    }
+  ],
+  "urls": [
+    "http://127.0.0.1:5000"
+  ],
+  "plugins": []
+}
